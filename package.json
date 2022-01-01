@@ -7,11 +7,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "sass": "^1.45.2",
     "vite": "^2.7.2"
   },
   "dependencies": {
-    "firebase": "^9.6.1",
-    "node-sass": "^7.0.1"
+    "firebase": "^9.6.1"
   },
   "resolutions": {
     "vite": "2.3.8"
