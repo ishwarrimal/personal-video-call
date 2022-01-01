@@ -12,5 +12,8 @@
   "dependencies": {
     "firebase": "^9.6.1",
     "node-sass": "^7.0.1"
+  },
+  "resolutions": {
+    "vite": "2.3.8"
   }
 }
