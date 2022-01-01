@@ -1,4 +1,4 @@
-import './style.css';
+import './style.scss';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
@@ -18,6 +18,14 @@ if (!firebase.apps.length) {
 }
 const firestore = firebase.firestore();
 
+const token = window.location.search.split('tokn=')[1];
+
+if(token){
+  setTimeout(() => {
+    answerCall();
+  },1000)
+}
+
 const servers = {
   iceServers: [
     {
@@ -33,17 +41,15 @@ let localStream = null;
 let remoteStream = null;
 
 // HTML elements
-const webcamButton = document.getElementById('webcamButton');
 const webcamVideo = document.getElementById('webcamVideo');
 const callButton = document.getElementById('callButton');
-const callInput = document.getElementById('callInput');
-const answerButton = document.getElementById('answerButton');
+const shareLink = document.getElementById('shareLink');
 const remoteVideo = document.getElementById('remoteVideo');
 const hangupButton = document.getElementById('hangupButton');
 
 // 1. Setup media sources
 
-webcamButton.onclick = async () => {
+const startWebcam = (async () => {
   localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
   remoteStream = new MediaStream();
 
@@ -63,9 +69,8 @@ webcamButton.onclick = async () => {
   remoteVideo.srcObject = remoteStream;
 
   callButton.disabled = false;
-  answerButton.disabled = false;
   webcamButton.disabled = true;
-};
+})()
 
 // 2. Create an offer
 callButton.onclick = async () => {
@@ -73,8 +78,9 @@ callButton.onclick = async () => {
   const callDoc = firestore.collection('calls').doc();
   const offerCandidates = callDoc.collection('offerCandidates');
   const answerCandidates = callDoc.collection('answerCandidates');
-
-  callInput.value = callDoc.id;
+  const link = `${window.location.origin}?token=${callDoc.id}`
+  shareLink.innerHTML = `<p>Share the link</p>${link}`;
+  navigator.clipboard.writeText(link);
 
   // Get candidates for caller, save to db
   pc.onicecandidate = (event) => {
@@ -114,10 +120,8 @@ callButton.onclick = async () => {
   hangupButton.disabled = false;
 };
 
-// 3. Answer the call with the unique ID
-answerButton.onclick = async () => {
-  const callId = callInput.value;
-  const callDoc = firestore.collection('calls').doc(callId);
+const answerCall = async () => {
+  const callDoc = firestore.collection('calls').doc(token);
   const answerCandidates = callDoc.collection('answerCandidates');
   const offerCandidates = callDoc.collection('offerCandidates');
 

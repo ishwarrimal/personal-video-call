@@ -10,6 +10,7 @@
     "vite": "^2.7.2"
   },
   "dependencies": {
-    "firebase": "^9.6.1"
+    "firebase": "^9.6.1",
+    "node-sass": "^7.0.1"
   }
 }
