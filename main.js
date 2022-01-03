@@ -1,16 +1,17 @@
+// require('dotenv').config()
 import './style.scss';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBTIuIalhFYQKX0YgCpRVx8LO3FM_BpAIg",
-  authDomain: "personal-video-call.firebaseapp.com",
-  projectId: "personal-video-call",
-  storageBucket: "personal-video-call.appspot.com",
-  messagingSenderId: "1073894896656",
-  appId: "1:1073894896656:web:9a4a1f109ec81af031c695",
-  measurementId: "G-YCP1R29YQ7"
+  apiKey: import.meta.env.apiKey,
+  authDomain: import.meta.env.authDomain,
+  projectId: import.meta.env.projectId,
+  storageBucket: import.meta.env.storageBucket,
+  messagingSenderId: import.meta.env.messagingSenderId,
+  appId: import.meta.env.appId,
+  measurementId: import.meta.env.measurementId
 };
 
 if (!firebase.apps.length) {
@@ -51,7 +52,7 @@ const hangupButton = document.getElementById('hangupButton');
 // 1. Setup media sources
 
 const startWebcam = (async () => {
-  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
   remoteStream = new MediaStream();
 
   // Push tracks from local stream to peer connection

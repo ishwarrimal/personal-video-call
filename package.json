@@ -11,9 +11,7 @@
     "vite": "^2.7.2"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
     "firebase": "^9.6.1"
-  },
-  "resolutions": {
-    "vite": "2.3.8"
   }
 }
