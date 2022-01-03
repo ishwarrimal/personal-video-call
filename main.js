@@ -18,7 +18,7 @@ if (!firebase.apps.length) {
 }
 const firestore = firebase.firestore();
 
-const token = window.location.search.split('tokn=')[1];
+const token = window.location.search.split('token=')[1];
 
 if(token){
   setTimeout(() => {
@@ -45,6 +45,7 @@ const webcamVideo = document.getElementById('webcamVideo');
 const callButton = document.getElementById('callButton');
 const shareLink = document.getElementById('shareLink');
 const remoteVideo = document.getElementById('remoteVideo');
+const remoteVideoContainer = document.getElementById('remoteVideoContainer');
 const hangupButton = document.getElementById('hangupButton');
 
 // 1. Setup media sources
@@ -60,6 +61,7 @@ const startWebcam = (async () => {
 
   // Pull tracks from remote stream, add to video stream
   pc.ontrack = (event) => {
+    remoteVideoContainer.style.display = 'block';
     event.streams[0].getTracks().forEach((track) => {
       remoteStream.addTrack(track);
     });
@@ -69,8 +71,8 @@ const startWebcam = (async () => {
   remoteVideo.srcObject = remoteStream;
 
   callButton.disabled = false;
-  webcamButton.disabled = true;
 })()
+
 
 // 2. Create an offer
 callButton.onclick = async () => {
@@ -79,7 +81,7 @@ callButton.onclick = async () => {
   const offerCandidates = callDoc.collection('offerCandidates');
   const answerCandidates = callDoc.collection('answerCandidates');
   const link = `${window.location.origin}?token=${callDoc.id}`
-  shareLink.innerHTML = `<p>Share the link</p>${link}`;
+  shareLink.innerHTML = `Copy Link: <mark>${link}</mark>`;
   navigator.clipboard.writeText(link);
 
   // Get candidates for caller, save to db
@@ -124,6 +126,7 @@ const answerCall = async () => {
   const callDoc = firestore.collection('calls').doc(token);
   const answerCandidates = callDoc.collection('answerCandidates');
   const offerCandidates = callDoc.collection('offerCandidates');
+  
 
   pc.onicecandidate = (event) => {
     event.candidate && answerCandidates.add(event.candidate.toJSON());
@@ -154,3 +157,7 @@ const answerCall = async () => {
     });
   });
 };
+
+shareLink.onclick = event => {
+  navigator.clipboard.writeText(event.currentTarget.children[0].innerText);
+}

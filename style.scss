@@ -10,27 +10,37 @@ body {
   padding: 0;
 }
 
+video {
+  width: 100%;
+  height: 100%;
+  background: #2c3e50;
+  object-fit: contain;
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+
 .videosContainer {
   position: relative;
   width: 100vw;
   height: 100vh;
-  .selfVideoContainer {
-    video {
-      width: 100%;
-      height: 100%;
-      background: #2c3e50;
-      object-fit: contain;
-      -webkit-transform: scaleX(-1);
-      transform: scaleX(-1);
-    }
-   }
   #remoteVideoContainer{
     display: none;
+    position: absolute;
+    right: 2em;
+    bottom: 6em;
+    background: black;
+    width: 20em;
+    height: 15em;
   }
   .actionButtons{
     position: absolute;
     left: 50%;
     bottom: 5em;
     transform: translate(-50%,0);
+    #shareLink{
+      background: rgba(255,255,255,0.5);
+      padding: 0 1em;
+      color: black;
+    }
   }
 }
