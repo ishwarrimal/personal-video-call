@@ -52,7 +52,7 @@ const hangupButton = document.getElementById('hangupButton');
 // 1. Setup media sources
 
 const startWebcam = (async () => {
-  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
   remoteStream = new MediaStream();
 
   // Push tracks from local stream to peer connection
