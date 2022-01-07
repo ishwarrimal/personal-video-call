@@ -23,6 +23,7 @@ const token = window.location.search.split('token=')[1];
 
 if(token){
   setTimeout(() => {
+    callButton.disabled = true;
     answerCall();
   },1000)
 }
@@ -63,12 +64,21 @@ const startWebcam = (async () => {
   // Pull tracks from remote stream, add to video stream
   pc.ontrack = (event) => {
     remoteVideoContainer.style.display = 'block';
+    hangupButton.disable = false;
     event.streams[0].getTracks().forEach((track) => {
       remoteStream.addTrack(track);
     });
   };
 
+  pc.onconnectionstatechange = (event) => {
+    const state = pc.iceConnectionState;
+    if(state === 'disconnected'){
+      resetCall();
+    }
+  }
+
   webcamVideo.srcObject = localStream;
+  webcamVideo.muted = true;
   remoteVideo.srcObject = remoteStream;
 
   callButton.disabled = false;
@@ -119,7 +129,7 @@ callButton.onclick = async () => {
       }
     });
   });
-
+  callButton.disabled = true;
   hangupButton.disabled = false;
 };
 
@@ -150,14 +160,26 @@ const answerCall = async () => {
 
   offerCandidates.onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
-      console.log(change);
       if (change.type === 'added') {
         let data = change.doc.data();
         pc.addIceCandidate(new RTCIceCandidate(data));
       }
     });
   });
+  hangupButton.disabled = false;
 };
+
+hangupButton.onclick = async (e) => {
+  await pc.close();
+  resetCall();
+}
+
+const resetCall = () => {
+  remoteVideoContainer.style.display = 'none';
+  callButton.disabled = false;
+  hangupButton.disabled = true;
+  shareLink.innerHTML = '';
+}
 
 shareLink.onclick = event => {
   navigator.clipboard.writeText(event.currentTarget.children[0].innerText);
