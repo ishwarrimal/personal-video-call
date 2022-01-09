@@ -9,7 +9,7 @@ This project is created with VITE in vanilla JS.
 1. #### WebRTC :
     Used for peer to peer connection, mostly browser to browser. Uses UDP protocol, so it's good to use this for for media transfer. This is used mostly for video call, audio call, etc. For important file transfer  this might not be appropriate.
 2. #### Signaling Server : 
-    In real world, tere is no true peer to peer conenction, we need signaling server to establish connection between peer to peer. WebRTC makes use of signaling server to help it establish connectio with other peers. 
+    In real world, tere is no true peer to peer conenction, we need signaling server to establish connection between peer to peer. WebRTC makes use of signaling server to help it establish connection with other peers. 
 3. #### ICE server :
     Due to the firewall that sits on our network, the address for the device keeps on changing. Hence, to communicate properly, ICE collects all available candidates (local IP addresses, reflexive addresses – STUN). All the collected addresses are then sent to the remote peer via SDP.
 4. #### SDP : 
