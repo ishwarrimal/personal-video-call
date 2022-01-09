@@ -80,7 +80,6 @@ const startWebcam = (async () => {
   webcamVideo.srcObject = localStream;
   webcamVideo.muted = true;
   remoteVideo.srcObject = remoteStream;
-
   callButton.disabled = false;
 })()
 
@@ -89,21 +88,31 @@ const startWebcam = (async () => {
 callButton.onclick = async () => {
   // Reference Firestore collections for signaling
   const callDoc = firestore.collection('calls').doc();
+  //Initiator creates an offer for other peers to connect. 
   const offerCandidates = callDoc.collection('offerCandidates');
+  //The peer creates answerCandidate and sends it to the signaling server.
   const answerCandidates = callDoc.collection('answerCandidates');
   const link = `${window.location.origin}?token=${callDoc.id}`
   shareLink.innerHTML = `Copy Link: <mark>${link}</mark>`;
   navigator.clipboard.writeText(link);
 
+  //As the IP of the peers keep changing, we need to take help of ICE (interacitivity connectivity establishment) which helps peers cordinate the discovery of their new IP address
+  // Both peers will generate list of ice candidates and share it with the signaling server.
+  //WebRTC will take help of stun server to get the ice candidates for peers.
+  //The algorithm will automatically find out which candidate is good for establishing connection at the moment.
+
   // Get candidates for caller, save to db
+  // Get's called when setLocalDescription is happened
   pc.onicecandidate = (event) => {
+    console.log('Local candidate is added => ',event.candidate);
     event.candidate && offerCandidates.add(event.candidate.toJSON());
   };
 
-  // Create offer
+  // Create offer and send it to signaling server, for other peers to be able to connect. This creates an sdp object (which contains video codec, timing, etc), which we use later.
   const offerDescription = await pc.createOffer();
   await pc.setLocalDescription(offerDescription);
 
+  // This data needs to be saved in a signaling server (in our case Firebase) using which other peers read to answer the call.
   const offer = {
     sdp: offerDescription.sdp,
     type: offerDescription.type,
@@ -111,7 +120,7 @@ callButton.onclick = async () => {
 
   await callDoc.set({ offer });
 
-  // Listen for remote answer
+  // Listen for remote answer by listening to the changes in the callDoc in the firestore (for inital connection)
   callDoc.onSnapshot((snapshot) => {
     const data = snapshot.data();
     if (!pc.currentRemoteDescription && data?.answer) {
