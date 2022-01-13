@@ -1,13 +1,21 @@
 // require('dotenv').config()
 import './style.scss';
-import jpt from './jpt';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_apiKey,
+  authDomain: import.meta.env.VITE_authDomain,
+  projectId: import.meta.env.VITE_projectId,
+  storageBucket: import.meta.env.VITE_storageBucket,
+  messagingSenderId: import.meta.env.VITE_messagingSenderId,
+  appId: import.meta.env.VITE_appId,
+  measurementId: import.meta.env.VITE_measurementId
+};
 
 if (!firebase.apps.length) {
-  firebase.initializeApp(jpt);
+  firebase.initializeApp(firebaseConfig);
 }
 const firestore = firebase.firestore();
 
